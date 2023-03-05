@@ -1,7 +1,9 @@
 module Main where
 
 main :: IO ()
-main = putStrLn (makeHtml "dicks" "everything")
+main = do
+    putStrLn (makeHtml "dicks" "everything")
+
 
 myhtml :: String
 myhtml = html_ (body_ "Hello, world!")
@@ -9,29 +11,46 @@ myhtml = html_ (body_ "Hello, world!")
 wrapHtml :: String -> String
 wrapHtml content = "<html><body>" <>content<> "</body></html>"
 
-html_ :: String -> String
-html_ = el "html"
+html_ :: String -> Structure
+html_ = Structure . el "html"
 --These functions are partially applied, el waits for the second argument
-body_ :: String -> String
-body_ = el "body"
+body_ :: String -> Structure
+body_ = Structure . el "body"
 
-head_ :: String -> String
-head_ content ="<head>"<> content<> "</head>"
+head_ :: String -> Structure
+head_ = Structure . el "head"
 
-title_ :: String -> String
-title_ content ="<title>" <>content<> "</title>"
+title_ :: String -> Structure
+title_ = Structure . el "title"
 
 dicks = (\content -> (<"<title>" <>content<> "</title>"))
 
-makeHtml :: String -> String -> String
-makeHtml title body = html_ ((head_ (title_ title)) <> (body_ ((h1_ "Title") <> (p_ body))))
+makeHtml :: String -> String -> Structure
+makeHtml title body = html_ (body_ "test")
+    --html_ (append_ (head_ (title_ title))  (body_ (append_ (h1_ "Title") (p_ body))))
 
-p_ :: String -> String
-p_ = el "p"
+p_ :: String ->  Structure
+p_ = Structure . el "p"
 
-h1_ :: String -> String
-h1_ = el "h1"
+h1_ :: String -> Structure
+h1_ = Structure . el "h1"
 
 el :: String -> String -> String
 el tag content =
     "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
+
+getStructureString :: Structure -> String
+getStructureString struct =
+    case struct of
+        Structure str -> str
+
+        
+
+getStructureString2 :: Structure -> String
+getStructureString2 (Structure str) = str
+
+newtype Html = Html String
+newtype Structure = Structure String
+
+append_ :: Structure -> Structure -> Structure
+append_ (Structure a) (Structure b) = Structure (a <> b)
