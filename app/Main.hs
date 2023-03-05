@@ -26,8 +26,7 @@ title_ = Structure . el "title"
 dicks = (\content -> (<"<title>" <>content<> "</title>"))
 
 makeHtml :: String -> String -> Structure
-makeHtml title body = html_ (body_ "test")
-    --html_ (append_ (head_ (title_ title))  (body_ (append_ (h1_ "Title") (p_ body))))
+makeHtml title body = html_ (append_ (head_ (title_ title))  (body_ (append_ (h1_ "Title") (p_ body))))
 
 p_ :: String ->  Structure
 p_ = Structure . el "p"
@@ -51,6 +50,11 @@ getStructureString2 (Structure str) = str
 
 newtype Html = Html String
 newtype Structure = Structure String
+
+render :: Html -> String
+render html =
+    case html of
+        Html str -> str 
 
 append_ :: Structure -> Structure -> Structure
 append_ (Structure a) (Structure b) = Structure (a <> b)
