@@ -1,34 +1,39 @@
 module Main where
 
 main :: IO ()
-main = do
-    putStrLn (makeHtml "dicks" "everything")
+main = putStrLn (render myhtml)
 
+myhtml :: Html
+myhtml =
+  html_
+    "My title"
+    ( append_
+      (h1_ "Heading")
+      ( append_
+        (p_ "Paragraph #1")
+        (p_ "Paragraph #2")
+      )
+    )
 
-myhtml :: String
-myhtml = html_ (body_ "Hello, world!")
+newtype Html
+  = Html String
 
-wrapHtml :: String -> String
-wrapHtml content = "<html><body>" <>content<> "</body></html>"
+newtype Structure
+  = Structure String
 
-html_ :: String -> Structure
-html_ = Structure . el "html"
---These functions are partially applied, el waits for the second argument
-body_ :: String -> Structure
-body_ = Structure . el "body"
+type Title
+  = String
 
-head_ :: String -> Structure
-head_ = Structure . el "head"
+html_ :: Title -> Structure -> Html
+html_ title content =
+    Html
+    ( el "html"
+        ( el "head" (el "title" title)
+            <> el "body" (getStructureString content)
+        )
+    )
 
-title_ :: String -> Structure
-title_ = Structure . el "title"
-
-dicks = (\content -> (<"<title>" <>content<> "</title>"))
-
-makeHtml :: String -> String -> Structure
-makeHtml title body = html_ (append_ (head_ (title_ title))  (body_ (append_ (h1_ "Title") (p_ body))))
-
-p_ :: String ->  Structure
+p_ :: String -> Structure
 p_ = Structure . el "p"
 
 h1_ :: String -> Structure
@@ -38,23 +43,16 @@ el :: String -> String -> String
 el tag content =
     "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
 
+append_ :: Structure -> Structure -> Structure
+append_ c1 c2 =
+    Structure (getStructureString c1 <> getStructureString c2)
+
 getStructureString :: Structure -> String
-getStructureString struct =
-    case struct of
+getStructureString content =
+    case content of
         Structure str -> str
-
-        
-
-getStructureString2 :: Structure -> String
-getStructureString2 (Structure str) = str
-
-newtype Html = Html String
-newtype Structure = Structure String
 
 render :: Html -> String
 render html =
     case html of
-        Html str -> str 
-
-append_ :: Structure -> Structure -> Structure
-append_ (Structure a) (Structure b) = Structure (a <> b)
+        Html str -> str

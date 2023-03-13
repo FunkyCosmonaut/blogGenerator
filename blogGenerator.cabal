@@ -13,12 +13,8 @@ version:            0.1.0.0
 
 -- The license under which the package is released.
 -- license:
-
--- The package author(s).
--- author:
-
--- An email address to which users can send suggestions, bug reports, and patches.
--- maintainer:
+author:             FunkyCosmonaut
+maintainer:         FunkyCosmonaut@protonmail.com
 
 -- A copyright notice.
 -- copyright:
